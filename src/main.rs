@@ -13,32 +13,6 @@ extern "C" {
     fn setMaxPriority();
 }
 
-// Prevent display from sleeping/powering down, prevent system
-// from sleeping, prevent sudden termination for any reason.
-#[cfg(target_os = "macos")]
-pub fn prevent() {
-    let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
-    let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-    let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-    let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-    let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-    let NSActivityLatencyCritical = 0xFF00000000u64;
-
-    let options = NSActivityIdleDisplaySleepDisabled
-        | NSActivityIdleSystemSleepDisabled
-        | NSActivitySuddenTerminationDisabled
-        | NSActivityAutomaticTerminationDisabled;
-    let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
-
-    unsafe {
-        let pinfo = NSProcessInfo::processInfo(nil);
-        let s = NSString::alloc(nil).init_str("prevent app nap");
-        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-
-        setMaxPriority();
-    }
-}
-
 #![cfg_attr(feature = "bench", feature(test))]
 #[cfg(feature = "bench")]
 extern crate test;
@@ -106,8 +80,32 @@ fn main() {
 
     #[cfg(target_os = "macos")]
     {
+        // Prevent display from sleeping/powering down, prevent system
+        // from sleeping, prevent sudden termination for any reason.
+        pub fn prevent() {
+            let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
+            let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+            let NSActivitySuddenTerminationDisabled = 1u64 << 14;
+            let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
+            let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
+            let NSActivityLatencyCritical = 0xFF00000000u64;
+
+            let options = NSActivityIdleDisplaySleepDisabled
+                | NSActivityIdleSystemSleepDisabled
+                | NSActivitySuddenTerminationDisabled
+                | NSActivityAutomaticTerminationDisabled;
+            let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+
+            unsafe {
+                let pinfo = NSProcessInfo::processInfo(nil);
+                let s = NSString::alloc(nil).init_str("prevent app nap");
+                let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+
+            setMaxPriority();
+            }
+        }
         // prevent macos app nap
-        macos_app_nap::prevent();
+        crate:macos_app_nap::prevent();
     }
 
     #[cfg(target_os = "linux")]
