@@ -105,7 +105,7 @@ fn main() {
             }
         }
         // prevent macos app nap
-        crate::macos-app-nap::prevent();
+        crate::macos_app_nap::prevent();
     }
 
     #[cfg(target_os = "linux")]
