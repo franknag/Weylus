@@ -242,7 +242,7 @@ struct WindowInfo {
 fn get_window_infos() -> Vec<WindowInfo> {
     let mut win_infos = vec![];
     let wins = CGDisplay::window_list_info(
-        display::kCGWindowListExcludeDesktopElements | display::kCGWindowListOptionOnScreenOnly,
+        display::kCGWindowListExcludeDesktopElements & display::kCGWindowListOptionOnScreenOnly,
         None,
     );
     if let Some(wins) = wins {
