@@ -5,7 +5,7 @@ extern crate test;
 #[macro_use]
 extern crate bitflags;
 
-#![allow(non_snake_case)]
+#[allow(non_snake_case)]
 
 #[cfg(target_os = "macos")]
 #[macro_use]
@@ -16,6 +16,8 @@ extern crate objc;
 extern "C" {
     fn setMaxPriority();
 }
+#[cfg(target_os = "macos")]
+extern crate macos_app_nap;
 
 use cocoa_foundation::base::{nil};
 use cocoa_foundation::foundation::{NSProcessInfo, NSString};
