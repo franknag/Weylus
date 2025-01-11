@@ -11,9 +11,6 @@ extern crate bitflags;
 #[macro_use]
 extern crate objc;
 
-//#[cfg(target_os = "macos")]
-//extern crate macos_app_nap;
-
 #[cfg(target_os = "macos")]
 #[link(name = "thread_priority_helper")]
 extern "C" {
@@ -108,7 +105,7 @@ fn main() {
             }
         }
         // prevent macos app nap
-        //macos_app_nap::prevent();
+        crate::macos_app_nap::prevent();
     }
 
     #[cfg(target_os = "linux")]
