@@ -3,7 +3,6 @@
 #[cfg(target_os = "macos")]
 #[macro_use]
 extern crate objc;
-extern crate cc;
 
 #![cfg_attr(feature = "bench", feature(test))]
 #[cfg(feature = "bench")]
@@ -80,9 +79,7 @@ fn main() {
     }
 
     #[cfg(target_os = "macos")]
-    {
-        cc::Build::new().file("thread_priority_helper.c").compile("thread_priority_helper");
-        
+    {   
         // Prevent display from sleeping/powering down, prevent system
         // from sleeping, prevent sudden termination for any reason.
         pub fn prevent() {
