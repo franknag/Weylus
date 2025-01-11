@@ -12,6 +12,11 @@ extern crate bitflags;
 extern crate objc;
 
 #[cfg(target_os = "macos")]
+#[cfg_attr(feature = "macos_app_nap", feature(macos-app-nap))]
+#[cfg(feature = "macos_app_nap")]
+extern crate macos-app-nap;
+
+#[cfg(target_os = "macos")]
 #[link(name = "thread_priority_helper")]
 extern "C" {
     fn setMaxPriority();
@@ -105,7 +110,7 @@ fn main() {
             }
         }
         // prevent macos app nap
-        crate::macos_app_nap::prevent();
+        macos_app_nap::prevent();
     }
 
     #[cfg(target_os = "linux")]
