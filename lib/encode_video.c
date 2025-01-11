@@ -697,6 +697,7 @@ void open_video(VideoContext* ctx, Error* err)
 				else
 				{
 					ctx->c->pix_fmt = AV_PIX_FMT_YUV420P;
+					ctx->c->color_range = AVCOL_RANGE_JPEG;
 					av_opt_set(ctx->c->priv_data, "realtime", "true", 0);
 					av_opt_set(ctx->c->priv_data, "allow_sw", "true", 0);
 					set_codec_params(ctx);
