@@ -63,6 +63,12 @@ fn main() {
         return;
     }
 
+    #[cfg(target_os = "macos")]
+    {
+        // prevent app-nap to avoid connection issues
+        macos_app_nap::prevent();
+    }
+
     #[cfg(target_os = "linux")]
     {
         // make sure XInitThreads is called before any threading is done
