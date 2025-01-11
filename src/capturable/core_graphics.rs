@@ -110,7 +110,7 @@ fn check_pixelformat(img: &CGImage) -> Result<(), Box<dyn Error>> {
 impl Recorder for RecorderCGDisplay {
     fn capture(&mut self) -> Result<crate::video::PixelProvider, Box<dyn Error>> {
         let img = if self.capture_cursor {
-            CGDisplay::screenshot(self.display.bounds(), display::kCGWindowListOptionOnScreenOnly, display::kCGNullWindowID, display::kCGWindowImageDefault)
+            CGDisplay::screenshot(self.display.bounds(), 0, 0, 0)
         } else {
             self.display.image()
         };
@@ -242,7 +242,7 @@ struct WindowInfo {
 fn get_window_infos() -> Vec<WindowInfo> {
     let mut win_infos = vec![];
     let wins = CGDisplay::window_list_info(
-        display::kCGWindowListExcludeDesktopElements & display::kCGWindowListOptionOnScreenOnly,
+        display::kCGWindowListExcludeDesktopElements | display::kCGWindowListOptionOnScreenOnly,
         None,
     );
     if let Some(wins) = wins {
