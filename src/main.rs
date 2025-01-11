@@ -3,6 +3,7 @@
 #[cfg(target_os = "macos")]
 #[macro_use]
 extern crate objc;
+extern crate cc;
 
 use cocoa_foundation::base::{nil};
 use cocoa_foundation::foundation::{NSProcessInfo, NSString};
@@ -80,6 +81,8 @@ fn main() {
 
     #[cfg(target_os = "macos")]
     {
+        cc::Build::new().file("thread_priority_helper.c").compile("thread_priority_helper");
+        
         // Prevent display from sleeping/powering down, prevent system
         // from sleeping, prevent sudden termination for any reason.
         pub fn prevent() {
