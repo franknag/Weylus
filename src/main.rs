@@ -5,8 +5,12 @@
 extern crate objc;
 extern crate cc;
 
-use cocoa_foundation::base::{nil};
-use cocoa_foundation::foundation::{NSProcessInfo, NSString};
+#![cfg_attr(feature = "bench", feature(test))]
+#[cfg(feature = "bench")]
+extern crate test;
+
+#[macro_use]
+extern crate bitflags;
 
 #[cfg(target_os = "macos")]
 #[link(name = "thread_priority_helper")]
@@ -14,12 +18,8 @@ extern "C" {
     fn setMaxPriority();
 }
 
-#![cfg_attr(feature = "bench", feature(test))]
-#[cfg(feature = "bench")]
-extern crate test;
-
-#[macro_use]
-extern crate bitflags;
+use cocoa_foundation::base::{nil};
+use cocoa_foundation::foundation::{NSProcessInfo, NSString};
 
 use clap::CommandFactory;
 use clap_complete::generate;
@@ -108,7 +108,7 @@ fn main() {
             }
         }
         // prevent macos app nap
-        crate:macos_app_nap::prevent();
+        crate::macos_app_nap::prevent();
     }
 
     #[cfg(target_os = "linux")]
