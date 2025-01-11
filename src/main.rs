@@ -66,7 +66,7 @@ fn main() {
     #[cfg(target_os = "macos")]
     {
         // prevent app-nap to avoid connection issues
-        macos_app_nap::prevent();
+        crate::macos_app_nap::prevent();
     }
 
     #[cfg(target_os = "linux")]
