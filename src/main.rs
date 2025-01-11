@@ -12,16 +12,13 @@ extern crate bitflags;
 extern crate objc;
 
 #[cfg(target_os = "macos")]
-#[cfg_attr(feature = "macos_app_nap", feature(macos-app-nap))]
-#[cfg(feature = "macos_app_nap")]
-extern crate macos-app-nap;
-
-#[cfg(target_os = "macos")]
 #[link(name = "thread_priority_helper")]
 extern "C" {
     fn setMaxPriority();
 }
 
+#[cfg(target_os = "macos")]
+use macos_app_nap;
 use cocoa_foundation::base::{nil};
 use cocoa_foundation::foundation::{NSProcessInfo, NSString};
 
