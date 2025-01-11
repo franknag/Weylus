@@ -1231,7 +1231,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7d947cbb889ed21c2a84be6ffbaebf5b4e0f4340638cba0444907e38b56be084"
 
 [[package]]
-name = "macos-app-nap"
+name = "macos_app_nap"
 version = "0.0.1"
 dependencies = [
  "cc",
