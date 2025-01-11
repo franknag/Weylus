@@ -17,7 +17,7 @@ extern "C" {
     fn setMaxPriority();
 }
 #[cfg(target_os = "macos")]
-extern crate macos_app_nap;
+extern crate macos-app-nap;
 
 use cocoa_foundation::base::{nil};
 use cocoa_foundation::foundation::{NSProcessInfo, NSString};
@@ -107,7 +107,7 @@ fn main() {
             }
         }
         // prevent macos app nap
-        macos_app_nap::prevent();
+        macos-app-nap::prevent();
     }
 
     #[cfg(target_os = "linux")]
