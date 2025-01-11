@@ -1,15 +1,15 @@
-#![allow(non_snake_case)]
-
-#[cfg(target_os = "macos")]
-#[macro_use]
-extern crate objc;
-
 #![cfg_attr(feature = "bench", feature(test))]
 #[cfg(feature = "bench")]
 extern crate test;
 
 #[macro_use]
 extern crate bitflags;
+
+#![allow(non_snake_case)]
+
+#[cfg(target_os = "macos")]
+#[macro_use]
+extern crate objc;
 
 #[cfg(target_os = "macos")]
 #[link(name = "thread_priority_helper")]
@@ -105,7 +105,7 @@ fn main() {
             }
         }
         // prevent macos app nap
-        crate::macos_app_nap::prevent();
+        macos_app_nap::prevent();
     }
 
     #[cfg(target_os = "linux")]
