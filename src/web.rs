@@ -254,27 +254,40 @@ pub fn run(
     std::thread::spawn(move || run_server(context, sender_ui, sender_startup, notify_shutdown))
 }
 
-#[cfg(target_os = "macos")]
-{
-    // Prevent display from sleeping/powering down, prevent system
-    // from sleeping, prevent sudden termination for any reason.
-    pub fn prevent_nap() {
-        let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-        let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-        let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-        let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-        let NSActivityLatencyCritical = 0xFF00000000u64;
+// Prevent display from sleeping/powering down, prevent system
+// from sleeping, prevent sudden termination for any reason.
+pub fn prevent_nap() {
+    let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+    let NSActivitySuddenTerminationDisabled = 1u64 << 14;
+    let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
+    let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
+    let NSActivityLatencyCritical = 0xFF00000000u64;
 
-        let options = NSActivityIdleSystemSleepDisabled
-            | NSActivitySuddenTerminationDisabled
-            | NSActivityAutomaticTerminationDisabled;
-        let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+    let options = NSActivityIdleSystemSleepDisabled
+        | NSActivitySuddenTerminationDisabled
+        | NSActivityAutomaticTerminationDisabled;
+    let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
 
-        unsafe {
-            let pinfo = NSProcessInfo::processInfo(nil);
-            let s = NSString::alloc(nil).init_str("prevent app nap");
-            let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-        }
+    unsafe {
+        let pinfo = NSProcessInfo::processInfo(nil);
+        let s = NSString::alloc(nil).init_str("prevent app nap");
+        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+    }
+}
+
+// Allow display from sleeping/powering down, prevent system
+// from sleeping, prevent sudden termination for any reason.
+pub fn allow_nap() {
+    let NSActivityUserInitiatedAllowingIdleSystemSleep = NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled;
+    let NSActivityUserInitiated = 0x00FFFFFFu64 | !NSActivityIdleSystemSleepDisabled;
+
+    let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
+    let options = options | NSActivityUserInitiated;
+
+    unsafe {
+        let pinfo = NSProcessInfo::processInfo(nil);
+        let s = NSString::alloc(nil).init_str("allow app nap");
+        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
     }
 }
 
@@ -324,7 +337,7 @@ async fn run_server(
                 info!("Webserver is shutting down.");
                 broadcast_shutdown.notify_waiters();
                 // prevent macos app nap
-                //macos_app_nap::allow_nap();
+                macos_app_nap::allow_nap();
                 break;
             }
         };
