@@ -94,6 +94,23 @@ pub fn prevent() {
     }
 }
 
+// Allow display from sleeping/powering down, prevent system
+// from sleeping, prevent sudden termination for any reason.
+pub fn allow() {
+    let NSActivityUserInitiated = 0x00FFFFFFu64 | !NSActivityIdleSystemSleepDisabled;
+    let NSActivityUserInitiatedAllowingIdleSystemSleep = NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled;
+    let NSActivityLatencyCritical = 0xFF00000000ULL;
+
+    let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
+    let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+
+    unsafe {
+        let pinfo = NSProcessInfo::processInfo(nil);
+        let s = NSString::alloc(nil).init_str("allow app nap");
+        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+    }
+}
+
 async fn response_from_path_or_default(
     path: Option<&PathBuf>,
     default: &str,
@@ -398,7 +415,7 @@ async fn run_server(
             _ = tokio::time::sleep(Duration::from_secs(1)) => {
                 semaphore_websocket_shutdown.add_permits(num_clients.load(Ordering::Relaxed));
             #[cfg(target_os = "macos")]
-            macos_app_nap::prevent();
+            macos_app_nap::allow();
             },
         }
     }
