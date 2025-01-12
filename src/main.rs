@@ -4,6 +4,8 @@ extern crate test;
 
 #[macro_use]
 extern crate bitflags;
+#[cfg(target_os = "macos")]
+extern crate objc;
 
 use clap::CommandFactory;
 use clap_complete::generate;
