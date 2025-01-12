@@ -134,12 +134,11 @@ impl Weylus {
         // from sleeping, prevent sudden termination for any reason.
         #[cfg(target_os = "macos")]
         {
-            let NSActivityUserInitiated = 0x00FFFFFFu64;
-            let NSActivityUserInitiatedAllowingIdleSystemSleep = NSActivityIdleSystemSleepDisabled;
+            let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
             let NSActivityLatencyCritical = 0xFF00000000ULL;
 
             let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
-            let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+            let options = options | NSActivityLatencyCritical;
 
             unsafe {
                 let pinfo = NSProcessInfo::processInfo(nil);
