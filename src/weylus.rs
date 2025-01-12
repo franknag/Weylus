@@ -135,7 +135,7 @@ impl Weylus {
         #[cfg(target_os = "macos")]
         {
             let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
-            let NSActivityLatencyCritical = 0xFF00000000ULL;
+            let NSActivityLatencyCritical = 0xFF00000000000;
 
             let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
             let options = options | NSActivityLatencyCritical;
