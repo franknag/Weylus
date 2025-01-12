@@ -1,24 +1,9 @@
-#![allow(non_snake_case)]
-
-#[cfg(target_os = "macos")]
-#[macro_use]
-extern crate objc;
-
-#[link(name = "thread_priority_helper")]
-extern "C" {
-    fn setMaxPriority();
-}
-
-#[cfg_attr(feature = "bench", feature(test))]
+#![cfg_attr(feature = "bench", feature(test))]
 #[cfg(feature = "bench")]
 extern crate test;
 
 #[macro_use]
 extern crate bitflags;
-
-use macos_app_nap;
-use cocoa_foundation::base::{nil};
-use cocoa_foundation::foundation::{NSProcessInfo, NSString};
 
 use clap::CommandFactory;
 use clap_complete::generate;
@@ -76,31 +61,6 @@ fn main() {
     if conf.print_lib_js {
         print!("{}", web::LIB_JS);
         return;
-    }
-
-    #[cfg(target_os = "macos")]
-    {
-        // Prevent display from sleeping/powering down, prevent system
-        // from sleeping, prevent sudden termination for any reason.
-        pub fn prevent() {
-            let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-            let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-            let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-            let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-            let NSActivityLatencyCritical = 0xFF00000000u64;
-
-            let options = NSActivityIdleSystemSleepDisabled
-                | NSActivitySuddenTerminationDisabled
-                | NSActivityAutomaticTerminationDisabled;
-            let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
-
-            unsafe {
-                let pinfo = NSProcessInfo::processInfo(nil);
-                let s = NSString::alloc(nil).init_str("prevent app nap");
-                let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-            }
-        }
-        macos_app_nap::prevent();
     }
 
     #[cfg(target_os = "linux")]
