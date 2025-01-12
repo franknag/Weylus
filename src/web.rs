@@ -20,10 +20,6 @@ use tokio::net::TcpListener;
 use tokio::sync::{mpsc, oneshot};
 use tracing::{debug, error, info, warn};
 
-use macos_app_nap;
-use cocoa_foundation::base::{nil};
-use cocoa_foundation::foundation::{NSProcessInfo, NSString};
-
 use crate::websocket::{weylus_websocket_channel, WeylusClientConfig, WeylusClientHandler};
 
 #[derive(Debug)]
@@ -276,9 +272,6 @@ async fn run_server(
         }
     };
 
-    // prevent macos app nap
-    macos_app_nap::prevent_nap();
-
     sender_startup.send(WebStartUpMessage::Start).unwrap();
 
     let context = Arc::new(context);
@@ -303,8 +296,6 @@ async fn run_server(
             _ = notify_shutdown.notified() => {
                 info!("Webserver is shutting down.");
                 broadcast_shutdown.notify_waiters();
-                // prevent macos app nap
-                macos_app_nap::allow_nap();
                 break;
             }
         };
