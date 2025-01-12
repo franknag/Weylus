@@ -1,9 +1,5 @@
 #![allow(non_snake_case)]
 
-#[cfg(target_os = "macos")]
-#[macro_use]
-extern crate objc;
-
 #[link(name = "thread_priority_helper")]
 extern "C" {
     fn setMaxPriority();
