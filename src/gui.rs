@@ -70,7 +70,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
     input_port.set_value(&config.web_port.to_string());
 
     let mut check_auto_start = CheckButton::default()
-        .with_size(70, height)
+        .with_size(40, height)
         .below_of(&input_port, padding + 5)
         .with_label("Auto Start");
     check_auto_start.set_tooltip("Start Weylus server immediately on program start.");
@@ -78,7 +78,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
 
     #[cfg(target_os = "linux")]
     let mut check_wayland = CheckButton::default()
-        .with_size(70, height)
+        .with_size(40, height)
         .right_of(&check_auto_start, 3 * padding)
         .with_label("Wayland/\nPipeWire\nSupport");
     #[cfg(target_os = "linux")]
@@ -91,7 +91,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
     }
 
     let mut check_native_hw_accel = CheckButton::default()
-        .with_size(70, height)
+        .with_size(40, height)
         .below_of(&check_auto_start, padding);
 
     #[cfg(target_os = "linux")]
@@ -119,7 +119,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
     }
 
     let mut check_nvenc = CheckButton::default()
-        .with_size(70, height)
+        .with_size(40, height)
         .below_of(&check_native_hw_accel, padding)
         .with_label("Force Nvidia Hardware");
     check_nvenc.set_tooltip("Try to use Nvidia's NVENC to encode the video via GPU.");
