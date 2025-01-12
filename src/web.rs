@@ -1,3 +1,20 @@
+#[allow(non_snake_case)]
+
+#[cfg(target_os = "macos")]
+#[macro_use]
+extern crate objc;
+
+#[cfg(target_os = "macos")]
+#[link(name = "thread_priority_helper")]
+extern "C" {
+    fn setMaxPriority();
+}
+
+#[cfg(target_os = "macos")]
+use macos_app_nap;
+use cocoa_foundation::base::{nil};
+use cocoa_foundation::foundation::{NSProcessInfo, NSString};
+
 use bytes::Bytes;
 use fastwebsockets::upgrade;
 use handlebars::Handlebars;
@@ -45,6 +62,47 @@ struct IndexTemplateContext {
     log_level: String,
     enable_custom_input_areas: bool,
 }
+
+#[cfg(target_os = "macos")]
+{   
+    // Prevent display from sleeping/powering down, prevent system
+    // from sleeping, prevent sudden termination for any reason.
+    pub fn prevent_nap() {
+        let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+        let NSActivitySuddenTerminationDisabled = 1u64 << 14;
+        let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
+        let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
+        let NSActivityLatencyCritical = 0xFF00000000u64;
+
+        let options = NSActivityIdleSystemSleepDisabled
+            | NSActivitySuddenTerminationDisabled
+            | NSActivityAutomaticTerminationDisabled;
+        let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+
+        unsafe {
+            let pinfo = NSProcessInfo::processInfo(nil);
+            let s = NSString::alloc(nil).init_str("prevent app nap");
+            let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+
+        setMaxPriority();
+        }
+    }
+
+    // Allow display from sleeping/powering down, prevent system
+    // from sleeping, prevent sudden termination for any reason.
+    pub fn allow_nap() {
+        let NSActivityUserInitiatedAllowingIdleSystemSleep = NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled;
+            
+        let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
+
+        unsafe {
+            let pinfo = NSProcessInfo::processInfo(nil);
+            let s = NSString::alloc(nil).init_str("allow app nap");
+            let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+        }
+    }
+}
+
 
 fn response_from_str(s: &str, content_type: &str) -> Response<Full<Bytes>> {
     Response::builder()
