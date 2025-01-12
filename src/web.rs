@@ -272,6 +272,12 @@ async fn run_server(
         }
     };
 
+    // prevent macos app nap
+    #[cfg(target_os = "macos")]
+    {
+        macos_app_nap::prevent_nap();
+    }
+
     sender_startup.send(WebStartUpMessage::Start).unwrap();
 
     let context = Arc::new(context);
@@ -296,6 +302,11 @@ async fn run_server(
             _ = notify_shutdown.notified() => {
                 info!("Webserver is shutting down.");
                 broadcast_shutdown.notify_waiters();
+                // prevent macos app nap
+                #[cfg(target_os = "macos")]
+                {
+                    macos_app_nap::allow_nap();
+                }
                 break;
             }
         };
