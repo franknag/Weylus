@@ -1,6 +1,5 @@
 #![allow(non_snake_case)]
 #[cfg(target_os = "macos")]
-{
 #[macro_use]
 extern crate objc;
 
@@ -8,8 +7,8 @@ extern crate objc;
 extern "C" {
     fn setMaxPriority();
 }
-}
 
+#[cfg(target_os = "macos")]
 use macos_app_nap;
 use cocoa_foundation::base::{nil};
 use cocoa_foundation::foundation::{NSProcessInfo, NSString};
