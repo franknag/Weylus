@@ -120,7 +120,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
 
     let mut check_nvenc = CheckButton::default()
         .with_size(70, height)
-        .below_of(&check_native_hw_accel, 2 * padding)
+        .below_of(&check_native_hw_accel, padding)
         .with_label("Force Nvidia Hardware");
     check_nvenc.set_tooltip("Try to use Nvidia's NVENC to encode the video via GPU.");
 
