@@ -72,7 +72,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
     let mut check_auto_start = CheckButton::default()
         .with_size(70, height)
         .below_of(&input_port, padding + 5)
-        .with_label("Auto Start");
+        .with_label("Auto Start Host");
     check_auto_start.set_tooltip("Start Weylus server immediately on program start.");
     check_auto_start.set_checked(config.auto_start);
 
@@ -90,13 +90,23 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
         check_wayland.set_checked(config.wayland_support);
     }
 
+    let mut label_hw_accel = Frame::default()
+        .with_size(width, height)
+        .below_of(&check_auto_start, padding)
+        .with_label("Try Hardware acceleration");
+    label_hw_accel.set_tooltip(
+        "On many systems video encoding can be done with hardware \
+        acceleration. By default this is disabled as the quality and stability of video encoding \
+        varies greatly among hardware and drivers. Currently this is only supported on Linux.",
+    );
+
     let mut check_native_hw_accel = CheckButton::default()
         .with_size(70, height)
-        .below_of(&check_auto_start, padding);
+        .below_of(&check_auto_start, 0);
 
     #[cfg(target_os = "linux")]
     {
-        check_native_hw_accel.set_label("Hardware Acceleration Only");
+        check_native_hw_accel.set_label("Hardware Acceleration");
         check_native_hw_accel
             .set_tooltip("Try to use hardware acceleration through the Video Acceleration API (VAAPI).");
         check_native_hw_accel.set_checked(config.try_vaapi);
@@ -104,7 +114,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
 
     #[cfg(target_os = "macos")]
     {
-        check_native_hw_accel.set_label("Hardware Acceleration Only");
+        check_native_hw_accel.set_label("Hardware Acceleration");
         check_native_hw_accel
             .set_tooltip("Try to use hardware acceleration through the VideoToolbox API.");
         check_native_hw_accel.set_checked(config.try_videotoolbox);
@@ -112,7 +122,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
 
     #[cfg(target_os = "windows")]
     {
-        check_native_hw_accel.set_label("Hardware Acceleration Only");
+        check_native_hw_accel.set_label("Hardware Acceleration");
         check_native_hw_accel
             .set_tooltip("Try to use hardware acceleration through the MediaFoundation API.");
         check_native_hw_accel.set_checked(config.try_mediafoundation);
@@ -120,22 +130,22 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
 
     let mut check_nvenc = CheckButton::default()
         .with_size(70, height)
-        .below_of(&check_native_hw_accel, padding)
-        .with_label("Force Nvidia Hardware");
+        .right_of(&check_native_hw_accel, 2 * padding)
+        .with_label("NVENC");
     check_nvenc.set_tooltip("Try to use Nvidia's NVENC to encode the video via GPU.");
 
-    //#[cfg(any(target_os = "linux", target_os = "windows"))]
+    #[cfg(any(target_os = "linux", target_os = "windows"))]
     check_nvenc.set_checked(config.try_nvenc);
 
-    //#[cfg(not(any(target_os = "linux", target_os = "windows")))]
-    //{
-        //check_nvenc.deactivate();
-        //check_nvenc.hide();
-    //}
+    #[cfg(not(any(target_os = "linux", target_os = "windows")))]
+    {
+        check_nvenc.deactivate();
+        check_nvenc.hide();
+    }
 
     let mut but_toggle = Button::default()
         .with_size(width, height)
-        .below_of(&check_nvenc, 2 * padding)
+        .below_of(&check_native_hw_accel, 2 * padding)
         .with_label("Start");
 
     let mut output_server_addr = Output::default()
@@ -220,10 +230,10 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                         config.try_vaapi = check_native_hw_accel.is_checked();
                         config.wayland_support = check_wayland.is_checked();
                     }
-                    //#[cfg(any(target_os = "linux", target_os = "windows"))]
-                    //{
+                    #[cfg(any(target_os = "linux", target_os = "windows"))]
+                    {
                         config.try_nvenc = check_nvenc.is_checked();
-                    //}
+                    }
                     #[cfg(target_os = "macos")]
                     {
                         config.try_videotoolbox = check_native_hw_accel.is_checked();
