@@ -108,7 +108,7 @@ fn main() {
         // Allow display from sleeping/powering down, prevent system
         // from sleeping, prevent sudden termination for any reason.
         pub fn allow_nap() {
-            let NSActivityUserInitiatedAllowingIdleSystemSleep = (NSActivityUserInitiated & ~NSActivityIdleSystemSleepDisabled)
+            let NSActivityUserInitiatedAllowingIdleSystemSleep = (NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled);
             
             let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
 
