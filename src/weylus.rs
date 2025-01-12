@@ -1,3 +1,12 @@
+#![allow(non_snake_case)]
+
+#[link(name = "thread_priority_helper")]
+extern "C" {
+    fn setMaxPriority();
+}
+use cocoa_foundation::base::{nil};
+use cocoa_foundation::foundation::{NSProcessInfo, NSString};
+
 use std::net::SocketAddr;
 use std::sync::Arc;
 use tracing::error;
@@ -96,10 +105,48 @@ impl Weylus {
                 on_web_message(msg);
             }
         });
+        // Prevent display from sleeping/powering down, prevent system
+        // from sleeping, prevent sudden termination for any reason.
+        #[cfg(target_os = "macos")]
+        {
+            let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+            let NSActivitySuddenTerminationDisabled = 1u64 << 14;
+            let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
+            let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
+            let NSActivityLatencyCritical = 0xFF00000000u64;
+
+            let options = NSActivityIdleSystemSleepDisabled
+                | NSActivitySuddenTerminationDisabled
+                | NSActivityAutomaticTerminationDisabled;
+            let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+
+            unsafe {
+                let pinfo = NSProcessInfo::processInfo(nil);
+                let s = NSString::alloc(nil).init_str("prevent app nap");
+                let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+            }
+        }
         true
     }
 
     pub fn stop(&mut self) {
+        // Allow display from sleeping/powering down, prevent system
+        // from sleeping, prevent sudden termination for any reason.
+        #[cfg(target_os = "macos")]
+        {
+            let NSActivityUserInitiated = 0x00FFFFFFu64;
+            let NSActivityUserInitiatedAllowingIdleSystemSleep = NSActivityIdleSystemSleepDisabled;
+            let NSActivityLatencyCritical = 0xFF00000000ULL;
+
+            let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
+            let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+
+            unsafe {
+                let pinfo = NSProcessInfo::processInfo(nil);
+                let s = NSString::alloc(nil).init_str("allow app nap");
+                let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+            }
+        }
         self.notify_shutdown.notify_one();
         self.wait();
     }
