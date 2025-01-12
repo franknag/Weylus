@@ -20,6 +20,10 @@ use tokio::net::TcpListener;
 use tokio::sync::{mpsc, oneshot};
 use tracing::{debug, error, info, warn};
 
+use macos_app_nap;
+use cocoa_foundation::base::{nil};
+use cocoa_foundation::foundation::{NSProcessInfo, NSString};
+
 use crate::websocket::{weylus_websocket_channel, WeylusClientConfig, WeylusClientHandler};
 
 #[derive(Debug)]
