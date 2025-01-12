@@ -1,7 +1,3 @@
-use macos_app_nap;
-use cocoa_foundation::base::{nil};
-use cocoa_foundation::foundation::{NSProcessInfo, NSString};
-
 use bytes::Bytes;
 use fastwebsockets::upgrade;
 use handlebars::Handlebars;
@@ -277,7 +273,7 @@ async fn run_server(
     };
 
     // prevent macos app nap
-    macos_app_nap::prevent_nap();
+    //macos_app_nap::prevent_nap();
 
     sender_startup.send(WebStartUpMessage::Start).unwrap();
 
@@ -304,7 +300,7 @@ async fn run_server(
                 info!("Webserver is shutting down.");
                 broadcast_shutdown.notify_waiters();
                 // prevent macos app nap
-                macos_app_nap::allow_nap();
+                //macos_app_nap::allow_nap();
                 break;
             }
         };
