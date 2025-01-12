@@ -9,6 +9,7 @@ extern crate objc;
 extern "C" {
     fn setMaxPriority();
 }
+}
 
 use macos_app_nap;
 use cocoa_foundation::base::{nil};
