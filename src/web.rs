@@ -397,6 +397,8 @@ async fn run_server(
             _ = notify_disconnect.notified() => (),
             _ = tokio::time::sleep(Duration::from_secs(1)) => {
                 semaphore_websocket_shutdown.add_permits(num_clients.load(Ordering::Relaxed));
+            #[cfg(target_os = "macos")]
+            macos_app_nap::prevent();
             },
         }
     }
