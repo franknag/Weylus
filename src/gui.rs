@@ -129,8 +129,8 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
 
     //#[cfg(not(any(target_os = "linux", target_os = "windows")))]
     //{
-        check_nvenc.deactivate();
-        check_nvenc.hide();
+        //check_nvenc.deactivate();
+        //check_nvenc.hide();
     //}
 
     let mut but_toggle = Button::default()
