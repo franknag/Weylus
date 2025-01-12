@@ -90,16 +90,6 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
         check_wayland.set_checked(config.wayland_support);
     }
 
-    let mut label_hw_accel = Frame::default()
-        .with_size(width, height)
-        .below_of(&check_auto_start, padding)
-        .with_label("Try Hardware acceleration");
-    label_hw_accel.set_tooltip(
-        "On many systems video encoding can be done with hardware \
-        acceleration. By default this is disabled as the quality and stability of video encoding \
-        varies greatly among hardware and drivers. Currently this is only supported on Linux.",
-    );
-
     let mut check_native_hw_accel = CheckButton::default()
         .with_size(70, height)
         .below_of(&check_auto_start, 0);
