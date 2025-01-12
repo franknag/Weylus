@@ -1,14 +1,3 @@
-#![allow(non_snake_case)]
-
-#[link(name = "thread_priority_helper")]
-extern "C" {
-    fn setMaxPriority();
-}
-
-use macos_app_nap;
-use cocoa_foundation::base::{nil};
-use cocoa_foundation::foundation::{NSProcessInfo, NSString};
-
 use bytes::Bytes;
 use fastwebsockets::upgrade;
 use handlebars::Handlebars;
@@ -71,44 +60,6 @@ fn response_not_found() -> Response<Full<Bytes>> {
         .header("content-type", "text/html; charset=utf-8")
         .body("Not found!".into())
         .unwrap()
-}
-
-// Prevent display from sleeping/powering down, prevent system
-// from sleeping, prevent sudden termination for any reason.
-pub fn prevent() {
-    let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-    let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-    let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-    let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-    let NSActivityLatencyCritical = 0xFF00000000u64;
-
-    let options = NSActivityIdleSystemSleepDisabled
-        | NSActivitySuddenTerminationDisabled
-        | NSActivityAutomaticTerminationDisabled;
-    let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
-
-    unsafe {
-        let pinfo = NSProcessInfo::processInfo(nil);
-        let s = NSString::alloc(nil).init_str("prevent app nap");
-        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-    }
-}
-
-// Allow display from sleeping/powering down, prevent system
-// from sleeping, prevent sudden termination for any reason.
-pub fn allow() {
-    let NSActivityUserInitiated = 0x00FFFFFFu64 | !NSActivityIdleSystemSleepDisabled;
-    let NSActivityUserInitiatedAllowingIdleSystemSleep = NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled;
-    let NSActivityLatencyCritical = 0xFF00000000ULL;
-
-    let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
-    let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
-
-    unsafe {
-        let pinfo = NSProcessInfo::processInfo(nil);
-        let s = NSString::alloc(nil).init_str("allow app nap");
-        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-    }
 }
 
 async fn response_from_path_or_default(
@@ -321,9 +272,6 @@ async fn run_server(
         }
     };
 
-    #[cfg(target_os = "macos")]
-    macos_app_nap::prevent();
-
     sender_startup.send(WebStartUpMessage::Start).unwrap();
 
     let context = Arc::new(context);
@@ -414,8 +362,6 @@ async fn run_server(
             _ = notify_disconnect.notified() => (),
             _ = tokio::time::sleep(Duration::from_secs(1)) => {
                 semaphore_websocket_shutdown.add_permits(num_clients.load(Ordering::Relaxed));
-            #[cfg(target_os = "macos")]
-            macos_app_nap::allow();
             },
         }
     }
