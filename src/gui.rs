@@ -220,10 +220,10 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                         config.try_vaapi = check_native_hw_accel.is_checked();
                         config.wayland_support = check_wayland.is_checked();
                     }
-                    #[cfg(any(target_os = "linux", target_os = "windows"))]
-                    {
+                    //#[cfg(any(target_os = "linux", target_os = "windows"))]
+                    //{
                         config.try_nvenc = check_nvenc.is_checked();
-                    }
+                    //}
                     #[cfg(target_os = "macos")]
                     {
                         config.try_videotoolbox = check_native_hw_accel.is_checked();
