@@ -36,6 +36,44 @@ use crate::config::{write_config, Config, ThemeType};
 use crate::protocol::{CustomInputAreas, Rect};
 use crate::web::Web2UiMessage::UInputInaccessible;
 
+// Prevent display from sleeping/powering down, prevent system
+// from sleeping, prevent sudden termination for any reason.
+pub fn prevent_sleep() {
+    //let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
+    let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+    let NSActivitySuddenTerminationDisabled = 1u64 << 14;
+    let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
+    let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
+    let NSActivityLatencyCritical = 0xFF00000000u64;
+
+    let options = NSActivityIdleSystemSleepDisabled
+        | NSActivitySuddenTerminationDisabled
+        | NSActivityAutomaticTerminationDisabled;
+    let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+
+    unsafe {
+        let pinfo = NSProcessInfo::processInfo(nil);
+        let s = NSString::alloc(nil).init_str("prevent app nap");
+        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+
+        //setMaxPriority();
+    }
+}
+
+// Allow display from sleeping/powering down, prevent system
+// from sleeping, prevent sudden termination for any reason.
+pub fn allow_sleep() {
+    let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
+
+    let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
+
+    unsafe {
+        let pinfo = NSProcessInfo::processInfo(nil);
+        let s = NSString::alloc(nil).init_str("allow app nap");
+        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+    }
+}
+
 pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
     let width = 200;
     let height = 30;
@@ -354,33 +392,9 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 }
                 output_server_addr.show();
                 but.set_label("Stop");
-                // Prevent display from sleeping/powering down, prevent system
-                // from sleeping, prevent sudden termination for any reason.
                 #[cfg(target_os = "macos")]
                 {
-                    //#![allow(non_snake_case)]
-                    //{
-                        let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
-                        let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-                        let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-                        let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-                        let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-                        let NSActivityLatencyCritical = 0xFF00000000u64;
-
-                        let options = NSActivityIdleDisplaySleepDisabled
-                            | NSActivityIdleSystemSleepDisabled
-                            | NSActivitySuddenTerminationDisabled
-                            | NSActivityAutomaticTerminationDisabled;
-                        let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
-
-                        unsafe {
-                            let pinfo = NSProcessInfo::processInfo(nil);
-                            let s = NSString::alloc(nil).init_str("prevent app nap");
-                            let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-
-                        //setMaxPriority();
-                        //}
-                    }
+                    prevent_sleep();
                 }
             } else {
                 weylus.stop();
@@ -389,22 +403,9 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 qr_frame.resize_callback(|_, _, _, _, _| {});
                 qr_frame.hide();
                 is_server_running = false;
-                // Allow display from sleeping/powering down, prevent system
-                // from sleeping, prevent sudden termination for any reason.
                 #[cfg(target_os = "macos")]
                 {
-                    //#![allow(non_snake_case)]
-                    //{
-                        let NSActivityUserInitiatedAllowingIdleSystemSleep = 1u64;
-
-                        let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
-
-                        unsafe {
-                            let pinfo = NSProcessInfo::processInfo(nil);
-                            let s = NSString::alloc(nil).init_str("allow app nap");
-                            let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-                        }
-                    //}
+                    allow_sleep();
                 }
             }
             Ok(())
