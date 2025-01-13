@@ -57,7 +57,7 @@ pub fn prevent_sleep() {
         let b = NSString::alloc(nil);
         let _:() = msg_send![nil, performActivityWithOptions:options reason:s usingBlock:b];
 
-        //setMaxPriority();
+        setMaxPriority();
     }
 }
 
