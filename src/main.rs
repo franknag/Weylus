@@ -95,7 +95,7 @@ fn main() {
         let s = NSString::alloc(nil).init_str("prevent app nap");
         let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
 
-        //setMaxPriority();
+        setMaxPriority();
     }
     }
     #[cfg(target_os = "linux")]
