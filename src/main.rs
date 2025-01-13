@@ -1,4 +1,12 @@
-#![cfg_attr(feature = "bench", feature(test))]
+#![allow(non_snake_case)]
+#[link(name = "thread_priority_helper")]
+extern "C" {
+    fn setMaxPriority();
+}
+use cocoa_foundation::base::{nil};
+use cocoa_foundation::foundation::{NSProcessInfo, NSString};
+
+#[cfg_attr(feature = "bench", feature(test))]
 #[cfg(feature = "bench")]
 extern crate test;
 
@@ -67,6 +75,28 @@ fn main() {
         return;
     }
 
+    #[cfg(target_os = "macos")]
+    {
+        let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
+    let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+    let NSActivitySuddenTerminationDisabled = 1u64 << 14;
+    let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
+    let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
+    let NSActivityLatencyCritical = 0xFF00000000u64;
+
+    let options = NSActivityIdleDisplaySleepDisabled
+        | NSActivityIdleSystemSleepDisabled
+        | NSActivitySuddenTerminationDisabled
+        | NSActivityAutomaticTerminationDisabled;
+    let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+
+    unsafe {
+        let s = NSString::alloc(nil).init_str("prevent app nap");
+        let _:() = msg_send![nil, beginActivityWithOptions:options reason:s];
+
+        //setMaxPriority();
+    }
+    }
     #[cfg(target_os = "linux")]
     {
         // make sure XInitThreads is called before any threading is done
