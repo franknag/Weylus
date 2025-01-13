@@ -1,8 +1,8 @@
 #![allow(non_snake_case)]
-#[link(name = "thread_priority_helper")]
-extern "C" {
-    fn setMaxPriority();
-}
+//#[link(name = "thread_priority_helper")]
+//extern "C" {
+//    fn setMaxPriority();
+//}
 use cocoa_foundation::base::{nil};
 use cocoa_foundation::foundation::{NSProcessInfo, NSString};
 
