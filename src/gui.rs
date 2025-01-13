@@ -358,8 +358,8 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 // from sleeping, prevent sudden termination for any reason.
                 #[cfg(target_os = "macos")]
                 {
-                    #![allow(non_snake_case)]
-                    {
+                    //#![allow(non_snake_case)]
+                    //{
                         let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
                         let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
                         let NSActivitySuddenTerminationDisabled = 1u64 << 14;
@@ -378,8 +378,8 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                             let s = NSString::alloc(nil).init_str("prevent app nap");
                             let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
 
-                        setMaxPriority();
-                        }
+                        //setMaxPriority();
+                        //}
                     }
                 }
             } else {
@@ -393,8 +393,8 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 // from sleeping, prevent sudden termination for any reason.
                 #[cfg(target_os = "macos")]
                 {
-                    #![allow(non_snake_case)]
-                    {
+                    //#![allow(non_snake_case)]
+                    //{
                         let NSActivityUserInitiatedAllowingIdleSystemSleep = 1u64;
 
                         let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
@@ -404,7 +404,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                             let s = NSString::alloc(nil).init_str("allow app nap");
                             let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
                         }
-                    }
+                    //}
                 }
             }
             Ok(())
