@@ -377,6 +377,8 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                             let pinfo = NSProcessInfo::processInfo(nil);
                             let s = NSString::alloc(nil).init_str("prevent app nap");
                             let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+
+                        //setMaxPriority();
                         }
                     }
                 }
@@ -393,7 +395,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 {
                     #![allow(non_snake_case)]
                     {
-                        let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
+                        let NSActivityUserInitiatedAllowingIdleSystemSleep = 1u64;
 
                         let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
 
