@@ -74,7 +74,9 @@ fn main() {
 
     #[cfg(target_os = "macos")]
     {
-        setMaxPriority();
+        unsafe {
+            setMaxPriority();
+        }
     }
     #[cfg(target_os = "linux")]
     {
