@@ -109,6 +109,8 @@ impl Weylus {
         // from sleeping, prevent sudden termination for any reason.
         #[cfg(target_os = "macos")]
         {
+            #![allow(non_snake_case)]
+            {
             let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
             let NSActivitySuddenTerminationDisabled = 1u64 << 14;
             let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
@@ -125,6 +127,7 @@ impl Weylus {
                 let s = NSString::alloc(nil).init_str("prevent app nap");
                 let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
             }
+            }
         }
         true
     }
@@ -134,8 +137,10 @@ impl Weylus {
         // from sleeping, prevent sudden termination for any reason.
         #[cfg(target_os = "macos")]
         {
-            let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
-            let NSActivityLatencyCritical = 0xFF00000000000;
+            #![allow(non_snake_case)]
+            {
+            let NSActivityUserInitiatedAllowingIdleSystemSleep = NSActivityUserInitiated;
+            let NSActivityLatencyCritical = 0;
 
             let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
             let options = options | NSActivityLatencyCritical;
@@ -144,6 +149,7 @@ impl Weylus {
                 let pinfo = NSProcessInfo::processInfo(nil);
                 let s = NSString::alloc(nil).init_str("allow app nap");
                 let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+            }
             }
         }
         self.notify_shutdown.notify_one();
