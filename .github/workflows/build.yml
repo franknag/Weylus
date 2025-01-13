@@ -15,11 +15,11 @@ jobs:
         os: [macos-13] # -latest if for Apple Silicon, -13 is for Intel
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/cache@v4
-      with:
-        path: deps/dist
-        key: ${{ runner.os }}-deps-${{ hashFiles('deps/*') }}
+    #- uses: actions/checkout@v4
+    #- uses: actions/cache@v4
+    #  with:
+    #    path: deps/dist
+    #    key: ${{ runner.os }}-deps-${{ hashFiles('deps/*') }}
     - uses: actions/cache@v4
       with:
         path: |
