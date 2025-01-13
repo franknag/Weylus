@@ -64,15 +64,9 @@ pub fn prevent_sleep() {
 // Allow display from sleeping/powering down, prevent system
 // from sleeping, prevent sudden termination for any reason.
 pub fn allow_sleep() {
-    //let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
-    //let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
-
-    //let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
-
     unsafe {
-        let pinfo = NSProcessInfo::processInfo("NSActivityUserInitiatedAllowingIdleSystemSleep");
-        let s = NSString::alloc(nil).init_str("allow app nap");
-        let _:() = msg_send![pinfo, reason:s];
+        let pinfo = NSProcessInfo::processInfo(nil);
+        let _:() = msg_send![pinfo, endActivity];
     }
 }
 
