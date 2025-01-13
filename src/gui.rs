@@ -40,6 +40,10 @@ use crate::web::Web2UiMessage::UInputInaccessible;
 // Prevent display from sleeping/powering down, prevent system
 // from sleeping, prevent sudden termination for any reason.
 pub fn prevent_sleep() {
+    unsafe {
+        let pinfo = NSProcessInfo::processInfo(nil);
+        let _:() = msg_send![nil, endActivity:pinfo];
+    }
     let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
     let NSActivitySuddenTerminationDisabled = 1u64 << 14;
     let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
@@ -57,15 +61,15 @@ pub fn prevent_sleep() {
         let b = NSString::alloc(nil);
         let _:() = msg_send![nil, performActivityWithOptions:options reason:s usingBlock:b];
 
-        setMaxPriority();
+        //setMaxPriority();
     }
 }
 
 // Allow display from sleeping/powering down, prevent system
 // from sleeping, prevent sudden termination for any reason.
 pub fn allow_sleep() {
-    let NSActivityUserInitiated = 0x00FFFFFFu64;
     let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+    let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
     let NSActivityUserInitiatedAllowingIdleSystemSleep = NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled;
 
     let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
