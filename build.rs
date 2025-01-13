@@ -88,7 +88,7 @@ fn main() {
         cc_video.define("HAS_VAAPI", None);
     }
     if target_os == "macos" {
-        cc::Build::new().file("lib/thread_priority_helper.c").compile("thread_priority_helper");
+        //cc::Build::new().file("lib/thread_priority_helper.c").compile("thread_priority_helper");
         cc_video.define("HAS_VIDEOTOOLBOX", None);
     }
     if target_os == "windows" {
