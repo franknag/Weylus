@@ -58,7 +58,6 @@ pub fn prevent_sleep() {
 
         setMaxPriority();
     }
-    }
 }
 
 // Allow display from sleeping/powering down, prevent system
