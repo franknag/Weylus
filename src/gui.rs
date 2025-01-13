@@ -40,6 +40,10 @@ use crate::web::Web2UiMessage::UInputInaccessible;
 // Prevent display from sleeping/powering down, prevent system
 // from sleeping, prevent sudden termination for any reason.
 pub fn prevent_sleep() {
+    unsafe {
+        let pinfo = NSProcessInfo::processInfo(nil);
+        let _:() = msg_send![nil, endActivity:pinfo];
+    }
     let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
     let NSActivitySuddenTerminationDisabled = 1u64 << 14;
     let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
