@@ -1,10 +1,3 @@
-#[link(name = "thread_priority_helper")]
-extern "C" {
-    fn setMaxPriority();
-}
-use cocoa_foundation::base::{nil};
-use cocoa_foundation::foundation::{NSProcessInfo, NSString};
-
 use bytes::Bytes;
 use fastwebsockets::upgrade;
 use handlebars::Handlebars;
@@ -279,33 +272,6 @@ async fn run_server(
         }
     };
 
-    // Prevent display from sleeping/powering down, prevent system
-    // from sleeping, prevent sudden termination for any reason.
-    #[cfg(target_os = "macos")]
-    {
-        #![allow(non_snake_case)]
-        {
-            let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
-            let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-            let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-            let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-            let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-            let NSActivityLatencyCritical = 0xFF00000000u64;
-
-            let options = NSActivityIdleDisplaySleepDisabled
-                | NSActivityIdleSystemSleepDisabled
-                | NSActivitySuddenTerminationDisabled
-                | NSActivityAutomaticTerminationDisabled;
-            let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
-
-            unsafe {
-                let pinfo = NSProcessInfo::processInfo(nil);
-                let s = NSString::alloc(nil).init_str("prevent app nap");
-                let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-            }
-        }
-    }
-
     sender_startup.send(WebStartUpMessage::Start).unwrap();
 
     let context = Arc::new(context);
@@ -330,23 +296,6 @@ async fn run_server(
             _ = notify_shutdown.notified() => {
                 info!("Webserver is shutting down.");
                 broadcast_shutdown.notify_waiters();
-                // Allow display from sleeping/powering down, prevent system
-                // from sleeping, prevent sudden termination for any reason.
-                #[cfg(target_os = "macos")]
-                {
-                    #![allow(non_snake_case)]
-                    {
-                        let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
-
-                        let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
-
-                        unsafe {
-                            let pinfo = NSProcessInfo::processInfo(nil);
-                            let s = NSString::alloc(nil).init_str("allow app nap");
-                            let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-                        }
-                    }
-                }
                 break;
             }
         };
