@@ -81,14 +81,13 @@ fn main() {
     let mut cc_video = cc::Build::new();
     cc_video.file("lib/encode_video.c");
     cc_video.include(dist_dir.join("include"));
-    if ["linux", "windows"].contains(&target_os.as_str()) {
+    if ["linux", "windows", "macos"].contains(&target_os.as_str()) {
         cc_video.define("HAS_NVENC", None);
     }
     if target_os == "linux" {
         cc_video.define("HAS_VAAPI", None);
     }
     if target_os == "macos" {
-        //cc::Build::new().file("lib/thread_priority_helper.c").compile("thread_priority_helper");
         cc_video.define("HAS_VIDEOTOOLBOX", None);
     }
     if target_os == "windows" {
