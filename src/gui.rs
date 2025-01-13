@@ -70,7 +70,7 @@ pub fn allow_sleep() {
     //let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
 
     unsafe {
-        let pinfo = NSProcessInfo::processInfo(NSActivityUserInitiatedAllowingIdleSystemSleep);
+        let pinfo = NSProcessInfo::processInfo("NSActivityUserInitiatedAllowingIdleSystemSleep");
         let s = NSString::alloc(nil).init_str("allow app nap");
         let _:() = msg_send![pinfo, reason:s];
     }
