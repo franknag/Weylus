@@ -139,8 +139,7 @@ impl Weylus {
         {
             #![allow(non_snake_case)]
             {
-            let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-            let NSActivityUserInitiatedAllowingIdleSystemSleep = !NSActivityIdleSystemSleepDisabled;
+            let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
 
             let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
 
