@@ -109,24 +109,24 @@ impl Weylus {
         {
             #![allow(non_snake_case)]
             {
-            let NSActivityIdleDisplaySleepDisabled = 1u64 << 40
-            let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-            let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-            let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-            let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-            let NSActivityLatencyCritical = 0xFF00000000u64;
+                let NSActivityIdleDisplaySleepDisabled = 1u64 << 40
+                let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+                let NSActivitySuddenTerminationDisabled = 1u64 << 14;
+                let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
+                let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
+                let NSActivityLatencyCritical = 0xFF00000000u64;
 
-            let options = NSActivityIdleDisplaySleepDisabled
-                | NSActivityIdleSystemSleepDisabled
-                | NSActivitySuddenTerminationDisabled
-                | NSActivityAutomaticTerminationDisabled;
-            let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+                let options = NSActivityIdleDisplaySleepDisabled
+                    | NSActivityIdleSystemSleepDisabled
+                    | NSActivitySuddenTerminationDisabled
+                    | NSActivityAutomaticTerminationDisabled;
+                let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
 
-            unsafe {
-                let pinfo = NSProcessInfo::processInfo(nil);
-                let s = NSString::alloc(nil).init_str("prevent app nap");
-                let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-            }
+                unsafe {
+                    let pinfo = NSProcessInfo::processInfo(nil);
+                    let s = NSString::alloc(nil).init_str("prevent app nap");
+                    let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+                }
             }
         }
         true
@@ -139,15 +139,15 @@ impl Weylus {
         {
             #![allow(non_snake_case)]
             {
-            let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
+                let NSActivityUserInitiatedAllowingIdleSystemSleep = 0x00FFFFFFu64;
 
-            let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
+                let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
 
-            unsafe {
-                let pinfo = NSProcessInfo::processInfo(nil);
-                let s = NSString::alloc(nil).init_str("allow app nap");
-                let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-            }
+                unsafe {
+                    let pinfo = NSProcessInfo::processInfo(nil);
+                    let s = NSString::alloc(nil).init_str("allow app nap");
+                    let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+                }
             }
         }
         self.notify_shutdown.notify_one();
