@@ -57,7 +57,6 @@ core-foundation = "^0.10"
 core-graphics = "^0.24"
 objc = "0.2"
 cocoa-foundation = "0.1"
-macos-app-nap = "0.0.1"
 
 [features]
 bench = []
