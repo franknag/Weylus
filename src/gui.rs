@@ -55,7 +55,7 @@ pub fn prevent_sleep() {
     unsafe {
         let pinfo = NSProcessInfo::processInfo(nil);
         let s = NSString::alloc(nil).init_str("prevent app nap");
-        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+        let _:() = msg_send![pinfo, performActivityWithOptions:options reason:s];
 
         //setMaxPriority();
     }
@@ -64,9 +64,18 @@ pub fn prevent_sleep() {
 // Allow display from sleeping/powering down, prevent system
 // from sleeping, prevent sudden termination for any reason.
 pub fn allow_sleep() {
+    let NSActivityUserInitiatedAllowingIdleSystemSleep = 1u64 << 40;
+    let NSActivityUserInitiated = 0x00FFFFFFu64;
+
+    let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
+    let options = options | NSActivityUserInitiated;
+
     unsafe {
         let pinfo = NSProcessInfo::processInfo(nil);
-        let _:() = msg_send![pinfo, endActivity];
+        let s = NSString::alloc(nil).init_str("prevent app nap");
+        let _:() = msg_send![pinfo, performActivityWithOptions:options reason:s];
+
+        //setMaxPriority();
     }
 }
 
