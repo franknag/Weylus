@@ -2,11 +2,6 @@
 #[cfg(feature = "bench")]
 extern crate test;
 
-#[link(name = "thread_priority_helper")]
-extern "C" {
-    fn setMaxPriority();
-}
-
 #[macro_use]
 extern crate bitflags;
 
@@ -72,12 +67,6 @@ fn main() {
         return;
     }
 
-    #[cfg(target_os = "macos")]
-    {
-        unsafe {
-            setMaxPriority();
-        }
-    }
     #[cfg(target_os = "linux")]
     {
         // make sure XInitThreads is called before any threading is done
