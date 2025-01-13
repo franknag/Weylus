@@ -91,8 +91,9 @@ fn main() {
     let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
 
     unsafe {
+        let pinfo = NSProcessInfo::processInfo(nil);
         let s = NSString::alloc(nil).init_str("prevent app nap");
-        let _:() = msg_send![nil, beginActivityWithOptions:options reason:s];
+        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
 
         //setMaxPriority();
     }
