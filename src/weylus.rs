@@ -139,11 +139,10 @@ impl Weylus {
         {
             #![allow(non_snake_case)]
             {
-            let NSActivityUserInitiatedAllowingIdleSystemSleep = NSActivityUserInitiated;
-            let NSActivityLatencyCritical = 0;
+            let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+            let NSActivityUserInitiatedAllowingIdleSystemSleep = !NSActivityIdleSystemSleepDisabled;
 
             let options = NSActivityUserInitiatedAllowingIdleSystemSleep;
-            let options = options | NSActivityLatencyCritical;
 
             unsafe {
                 let pinfo = NSProcessInfo::processInfo(nil);
