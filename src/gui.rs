@@ -1,3 +1,4 @@
+#![allow(non_snake_case)]
 #[link(name = "thread_priority_helper")]
 extern "C" {
     fn setMaxPriority();
