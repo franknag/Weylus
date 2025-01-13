@@ -54,7 +54,7 @@ pub fn prevent_sleep() {
     unsafe {
         let pinfo = NSProcessInfo::processInfo(nil);
         let s = NSString::alloc(nil).init_str("prevent app nap");
-        let b = NSString::alloc(nil);
+        let b = NSString::alloc(nil).init_str(nil);
         let _:() = msg_send![pinfo, performActivityWithOptions:options reason:s usingBlock:b];
 
         //setMaxPriority();
@@ -73,7 +73,7 @@ pub fn allow_sleep() {
     unsafe {
         let pinfo = NSProcessInfo::processInfo(nil);
         let s = NSString::alloc(nil).init_str("allow app nap");
-        let b = NSString::alloc(nil);
+        let b = NSString::alloc(nil).init_str(nil);
         let _:() = msg_send![pinfo, performActivityWithOptions:options reason:s usingBlock:b];
 
         //setMaxPriority();
