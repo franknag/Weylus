@@ -124,10 +124,10 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
         .with_label("NVENC");
     check_nvenc.set_tooltip("Try to use Nvidia's NVENC to encode the video via GPU.");
 
-    #[cfg(any(target_os = "linux", target_os = "windows"))]
+    #[cfg(any(target_os = "linux", target_os = "windows", target_os = "macos"))]
     check_nvenc.set_checked(config.try_nvenc);
 
-    #[cfg(not(any(target_os = "linux", target_os = "windows")))]
+    #[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
     {
         check_nvenc.deactivate();
         check_nvenc.hide();
@@ -220,7 +220,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                         config.try_vaapi = check_native_hw_accel.is_checked();
                         config.wayland_support = check_wayland.is_checked();
                     }
-                    #[cfg(any(target_os = "linux", target_os = "windows"))]
+                    #[cfg(any(target_os = "linux", target_os = "windows", target_os = "macos"))]
                     {
                         config.try_nvenc = check_nvenc.is_checked();
                     }
