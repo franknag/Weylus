@@ -112,7 +112,7 @@ impl Recorder for RecorderCGDisplay {
         let img = if self.capture_cursor {
             CFArray::from_copyable(&[
                 self.win.cursor_id as *const c_void,
-            ])
+            ]);
             CGDisplay::screenshot(self.display.bounds(), 0, 0, 0)
         } else {
             self.display.image()
