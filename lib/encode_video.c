@@ -696,8 +696,8 @@ void open_video(VideoContext* ctx, Error* err)
 				}
 				else
 				{
-					//ctx->c->pix_fmt = AV_PIX_FMT_YUV420P;
-					ctx->c->pix_fmt = AV_PIX_FMT_VIDEOTOOLBOX;
+					ctx->c->pix_fmt = AV_PIX_FMT_YUV420P;
+					//ctx->c->pix_fmt = AV_PIX_FMT_VIDEOTOOLBOX;
 					ctx->c->color_range = AVCOL_RANGE_MPEG;
 					ctx->c->profile = AV_PROFILE_H264_CONSTRAINED_BASELINE;
 					ctx->c->level = 0;
