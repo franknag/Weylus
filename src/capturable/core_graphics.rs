@@ -113,7 +113,7 @@ impl Recorder for RecorderCGDisplay {
             CGDisplay::screenshot(self.display.bounds(), 0, 0, 0)
         } else {
             self.display.image()
-        }
+        };
         if let Some(img) = img {
             check_pixelformat(&img)?;
             let w = img.width() as usize;
@@ -126,7 +126,7 @@ impl Recorder for RecorderCGDisplay {
                 h,
                 img.bytes_per_row(),
                 self.img_data.as_ref().unwrap().bytes(),
-            ));
+            ))
         } else {
             Err(Box::new(CGError(
                 "Failed to capture screen using CoreGraphics.".into(),
