@@ -13,7 +13,7 @@ use core_foundation::{
 };
 use core_graphics::{
     display,
-    display::{CGDisplay, CGRect},
+    display::{CGDisplay, CGRect, CFRelease},
     image::CGImage,
     window,
     window::CGWindowID,
