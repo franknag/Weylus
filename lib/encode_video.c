@@ -700,9 +700,11 @@ void open_video(VideoContext* ctx, Error* err)
 					ctx->c->color_range = AVCOL_RANGE_MPEG;
 					av_opt_set(ctx->c->priv_data, "realtime", "true", 0);
 					av_opt_set(ctx->c->priv_data, "allow_sw", "true", 0);
-					av_opt_set(ctx->c->priv_data, "profile", "AV_PROFILE_H264_CONSTRAINED_BASELINE", 0);
+					av_opt_set(ctx->c->priv_data, "profile", "constrained_baseline", 0);
 					//av_opt_set(ctx->c->priv_data, "prio_speed", "true", 0);
 					//av_opt_set(ctx->c->priv_data, "bit_rate_num", "40000", 0);
+					//av_opt_set(ctx->c->priv_data, "max_rate", "40000", 0);
+					//av_opt_set(ctx->c->priv_data, "max_ref_frames", "60", 0);
 					set_codec_params(ctx);
 					if (avcodec_open2(ctx->c, codec, NULL) == 0)
 						using_hw = 1;
