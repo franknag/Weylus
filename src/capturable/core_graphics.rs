@@ -13,7 +13,7 @@ use core_foundation::{
 };
 use core_graphics::{
     display,
-    display::{CGDisplay, CGRect, CFRelease},
+    display::{CGDisplay, CGRect},
     image::CGImage,
     window,
     window::CGWindowID,
@@ -130,7 +130,6 @@ impl Recorder for RecorderCGDisplay {
                 img.bytes_per_row(),
                 self.img_data.as_ref().unwrap().bytes(),
             ));
-            CFRelease(img);
         } else {
             Err(Box::new(CGError(
                 "Failed to capture screen using CoreGraphics.".into(),
