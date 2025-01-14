@@ -111,7 +111,7 @@ impl Recorder for RecorderCGDisplay {
     fn capture(&mut self) -> Result<crate::video::PixelProvider, Box<dyn Error>> {
         let img = if self.capture_cursor {
             CFArray::from_copyable(&[
-                RecorderCGWindow::win.cursor_id as *const c_void,
+                CGWindowID as *const c_void,
             ]);
             CGDisplay::screenshot(self.display.bounds(), 0, 0, 0)
         } else {
