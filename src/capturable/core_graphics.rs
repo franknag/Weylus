@@ -110,7 +110,8 @@ fn check_pixelformat(img: &CGImage) -> Result<(), Box<dyn Error>> {
 impl Recorder for RecorderCGDisplay {
     fn capture(&mut self) -> Result<crate::video::PixelProvider, Box<dyn Error>> {
         let img = if self.capture_cursor {
-            CGDisplay::screenshot(self.display.bounds(), 0, 0, 0)
+            CGDisplayCreateImage(self.display.id);
+            //CGDisplay::screenshot(self.display.bounds(), 0, 0, 0)
         } else {
             self.display.image()
         };
