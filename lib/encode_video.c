@@ -701,7 +701,7 @@ void open_video(VideoContext* ctx, Error* err)
 					av_opt_set(ctx->c->priv_data, "realtime", "true", 0);
 					av_opt_set(ctx->c->priv_data, "allow_sw", "true", 0);
 					av_opt_set(ctx->c->priv_data, "profile", "baseline", 0);
-					av_opt_set(ctx->c->priv_data, "tune", "zerolatency", 0);
+					av_opt_set(ctx->c->priv_data, "prio_speed", "true", 0);
 					set_codec_params(ctx);
 					if (avcodec_open2(ctx->c, codec, NULL) == 0)
 						using_hw = 1;
