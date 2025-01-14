@@ -83,7 +83,7 @@ pub struct Config {
         help = "Try to use hardware acceleration through the Video Acceleration API."
     )]
     pub try_vaapi: bool,
-    #[cfg(any(target_os = "linux", target_os = "windows"))]
+    #[cfg(any(target_os = "linux", target_os = "windows", target_os = "macos"))]
     #[arg(long, help = "Try to use Nvidia's NVENC to encode the video via GPU.")]
     #[serde(default)]
     pub try_nvenc: bool,
