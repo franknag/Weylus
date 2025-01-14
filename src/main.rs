@@ -78,14 +78,15 @@ fn main() {
     {
         // Prevent display from sleeping/powering down, prevent system
         // from sleeping, prevent sudden termination for any reason.
-        //let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
+        let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
         let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
         let NSActivitySuddenTerminationDisabled = 1u64 << 14;
         let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
         let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
         let NSActivityLatencyCritical = 0xFF00000000u64;
 
-        let options = NSActivityIdleSystemSleepDisabled
+        let options = NSActivityIdleDisplaySleepDisabled
+            | NSActivityIdleSystemSleepDisabled
             | NSActivitySuddenTerminationDisabled
             | NSActivityAutomaticTerminationDisabled;
         let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
