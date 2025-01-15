@@ -354,6 +354,29 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 }
                 output_server_addr.show();
                 but.set_label("Stop");
+                #[cfg(target_os = "macos")]
+                {
+                    // Prevent display from sleeping/powering down, prevent system
+                    // from sleeping, prevent sudden termination for any reason.
+                    let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
+                    let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+                    let NSActivitySuddenTerminationDisabled = 1u64 << 14;
+                    let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
+                    let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
+                    let NSActivityLatencyCritical = 0xFF00000000u64;
+
+                    let options = NSActivityIdleDisplaySleepDisabled
+                        | NSActivityIdleSystemSleepDisabled
+                        | NSActivitySuddenTerminationDisabled
+                        | NSActivityAutomaticTerminationDisabled;
+                    let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+
+                    unsafe {
+                        let pinfo = NSProcessInfo::processInfo(nil).processName();
+                        let s = NSString::alloc(nil).init_str("prevent app nap");
+                    let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+                    }
+                }
             } else {
                 weylus.stop();
                 but.set_label("Start");
@@ -361,9 +384,12 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 qr_frame.resize_callback(|_, _, _, _, _| {});
                 qr_frame.hide();
                 is_server_running = false;
-                unsafe {
-                    let pinfo = NSProcessInfo::processInfo(nil):processName();
-                    let _:() = msg_send![nil, endActivity:pinfo];
+                #[cfg(target_os = "macos")]
+                {
+                    unsafe {
+                        let pinfo = NSProcessInfo::processInfo(nil).processName();
+                        let _:() = msg_send![nil, endActivity:pinfo];
+                    }
                 }
             }
             Ok(())
