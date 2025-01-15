@@ -1,10 +1,3 @@
-#![allow(non_snake_case)]
-
-#[cfg(target_os = "macos")]
-use cocoa_foundation::base::{nil};
-#[cfg(target_os = "macos")]
-use cocoa_foundation::foundation::{NSProcessInfo, NSString};
-
 use bytes::Bytes;
 use fastwebsockets::upgrade;
 use handlebars::Handlebars;
@@ -51,36 +44,6 @@ struct IndexTemplateContext {
     capture_cursor_enabled: bool,
     log_level: String,
     enable_custom_input_areas: bool,
-}
-
-fn prevent_sleep() {
-    // Prevent display from sleeping/powering down, prevent system
-    // from sleeping, prevent sudden termination for any reason.
-    let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
-    let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-    let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-    let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-    let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-    let NSActivityLatencyCritical = 0xFF00000000u64;
-
-    let options = NSActivityIdleDisplaySleepDisabled
-        | NSActivityIdleSystemSleepDisabled
-        | NSActivitySuddenTerminationDisabled
-        | NSActivityAutomaticTerminationDisabled;
-    let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
-
-    unsafe {
-        //let pinfo = NSProcessInfo::processInfo(nil).processName();
-        let s = NSString::alloc(nil).init_str("prevent app nap");
-        let _:() = msg_send![nil, performActivityWithOptions:options reason:s];
-    }
-}
-
-fn allow_sleep() {
-    unsafe {
-        let pinfo = NSProcessInfo::processInfo(nil).processName();
-        let _:() = msg_send![nil, endActivity:pinfo];
-    }
 }
 
 fn response_from_str(s: &str, content_type: &str) -> Response<Full<Bytes>> {
@@ -308,9 +271,6 @@ async fn run_server(
             return;
         }
     };
-
-    #[cfg(target_os = "macos")]
-    prevent_sleep();
     
     sender_startup.send(WebStartUpMessage::Start).unwrap();
 
