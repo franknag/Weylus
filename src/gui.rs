@@ -374,7 +374,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                     unsafe {
                         let pinfo = NSProcessInfo::processInfo(nil).processName();
                         let s = NSString::alloc(nil).init_str("prevent app nap");
-                    let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+                    let _:() = msg_send![nil, performActivityWithOptions:options reason:s];
                     }
                 }
             } else {
