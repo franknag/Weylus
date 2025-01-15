@@ -1,3 +1,10 @@
+#![allow(non_snake_case)]
+
+#[cfg(target_os = "macos")]
+use cocoa_foundation::base::{nil};
+#[cfg(target_os = "macos")]
+use cocoa_foundation::foundation::{NSProcessInfo, NSString};
+
 use std::cmp::min;
 use std::io::Cursor;
 use std::iter::Iterator;
