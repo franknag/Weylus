@@ -354,6 +354,10 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 qr_frame.resize_callback(|_, _, _, _, _| {});
                 qr_frame.hide();
                 is_server_running = false;
+                unsafe {
+                    let pinfo = NSProcessInfo::processInfo();
+                    let _:() = msg_send![nil, endActivity:pinfo];
+                }
             }
             Ok(())
         }() {
