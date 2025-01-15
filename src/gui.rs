@@ -362,7 +362,7 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 qr_frame.hide();
                 is_server_running = false;
                 unsafe {
-                    let pinfo = NSProcessInfo::processInfo();
+                    let pinfo = NSProcessInfo::processInfo(nil);
                     let _:() = msg_send![nil, endActivity:pinfo];
                 }
             }
