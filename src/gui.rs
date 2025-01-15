@@ -1,10 +1,3 @@
-#![allow(non_snake_case)]
-
-#[cfg(target_os = "macos")]
-use cocoa_foundation::base::{nil};
-#[cfg(target_os = "macos")]
-use cocoa_foundation::foundation::{NSProcessInfo, NSString};
-
 use std::cmp::min;
 use std::io::Cursor;
 use std::iter::Iterator;
@@ -354,30 +347,6 @@ pub fn run(config: &Config, log_receiver: mpsc::Receiver<String>) {
                 }
                 output_server_addr.show();
                 but.set_label("Stop");
-                #[cfg(target_os = "macos")]
-                {
-                    // Prevent display from sleeping/powering down, prevent system
-                    // from sleeping, prevent sudden termination for any reason.
-                    let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
-                    let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-                    let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-                    let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-                    let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-                    let NSActivityLatencyCritical = 0xFF00000000u64;
-                    //let NSActivityUserInteractive = NSActivityUserInitiated | NSActivityLatencyCritical;
-
-                    let options = NSActivityIdleDisplaySleepDisabled
-                        | NSActivityIdleSystemSleepDisabled
-                        | NSActivitySuddenTerminationDisabled
-                        | NSActivityAutomaticTerminationDisabled;
-                    let options = options | NSActivityLatencyCritical;
-
-                    unsafe {
-                        let pinfo = NSProcessInfo::processInfo(nil).processName();
-                        let s = NSString::alloc(nil).init_str("prevent app nap");
-                        let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-                    }
-                }
             } else {
                 weylus.stop();
                 but.set_label("Start");
