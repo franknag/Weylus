@@ -1,9 +1,9 @@
-//#![allow(non_snake_case)]
+#![allow(non_snake_case)]
 
-//#[cfg(target_os = "macos")]
-//use cocoa_foundation::base::{nil};
-//#[cfg(target_os = "macos")]
-//use cocoa_foundation::foundation::{NSProcessInfo, NSString};
+#[cfg(target_os = "macos")]
+use cocoa_foundation::base::{nil};
+#[cfg(target_os = "macos")]
+use cocoa_foundation::foundation::{NSProcessInfo, NSString};
 
 #![cfg_attr(feature = "bench", feature(test))]
 #[cfg(feature = "bench")]
@@ -74,29 +74,29 @@ fn main() {
         return;
     }
 
-    //#[cfg(target_os = "macos")]
-    //{
+    #[cfg(target_os = "macos")]
+    {
         // Prevent display from sleeping/powering down, prevent system
         // from sleeping, prevent sudden termination for any reason.
-        //let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
-        //let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
-        //let NSActivitySuddenTerminationDisabled = 1u64 << 14;
-        //let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
-        //let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
-        //let NSActivityLatencyCritical = 0xFF00000000u64;
+        let NSActivityIdleDisplaySleepDisabled = 1u64 << 40;
+        let NSActivityIdleSystemSleepDisabled = 1u64 << 20;
+        let NSActivitySuddenTerminationDisabled = 1u64 << 14;
+        let NSActivityAutomaticTerminationDisabled = 1u64 << 15;
+        let NSActivityUserInitiated = 0x00FFFFFFu64 | NSActivityIdleSystemSleepDisabled;
+        let NSActivityLatencyCritical = 0xFF00000000u64;
 
-        //let options = NSActivityIdleDisplaySleepDisabled
-        //    | NSActivityIdleSystemSleepDisabled
-        //    | NSActivitySuddenTerminationDisabled
-        //    | NSActivityAutomaticTerminationDisabled;
-        //let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
+        let options = NSActivityIdleDisplaySleepDisabled
+            | NSActivityIdleSystemSleepDisabled
+            | NSActivitySuddenTerminationDisabled
+            | NSActivityAutomaticTerminationDisabled;
+        let options = options | NSActivityUserInitiated | NSActivityLatencyCritical;
 
-        //unsafe {
-        //    let pinfo = NSProcessInfo::processInfo(nil);
-        //    let s = NSString::alloc(nil).init_str("prevent app nap");
-        //    let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
-        //}
-    //}
+        unsafe {
+            let pinfo = NSProcessInfo::processInfo(nil);
+            let s = NSString::alloc(nil).init_str("prevent app nap");
+            let _:() = msg_send![pinfo, beginActivityWithOptions:options reason:s];
+        }
+    }
 
     #[cfg(target_os = "linux")]
     {
