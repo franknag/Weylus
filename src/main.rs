@@ -5,7 +5,7 @@ use cocoa_foundation::base::{nil};
 #[cfg(target_os = "macos")]
 use cocoa_foundation::foundation::{NSProcessInfo, NSString};
 
-#![cfg_attr(feature = "bench", feature(test))]
+#[cfg_attr(feature = "bench", feature(test))]
 #[cfg(feature = "bench")]
 extern crate test;
 
