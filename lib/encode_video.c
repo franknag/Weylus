@@ -712,7 +712,7 @@ void open_video(VideoContext* ctx, Error* err)
 					//av_opt_set(ctx->c->priv_data, "max_rate", "40000", 0);
 					//av_opt_set(ctx->c->priv_data, "max_ref_frames", "60", 0);
 					av_opt_set(ctx->c->priv_data, "preset", "ultrafast", 0);
-					av_opt_set(ctx->c->priv_data, "crf", "38", 0);
+					av_opt_set(ctx->c->priv_data, "crf", "54", 0);
 					set_codec_params(ctx);
 					if (avcodec_open2(ctx->c, codec, NULL) == 0)
 						using_hw = 1;
