@@ -698,9 +698,10 @@ void open_video(VideoContext* ctx, Error* err)
 				{
 					ctx->c->pix_fmt = AV_PIX_FMT_YUV420P;
 					ctx->c->color_range = AVCOL_RANGE_MPEG;
+					ctx->c->profile = AV_PROFILE_H264_CONSTRAINED_BASELINE;
+					ctx->c->level = 0;
 					av_opt_set(ctx->c->priv_data, "realtime", "true", 0);
 					av_opt_set(ctx->c->priv_data, "allow_sw", "true", 0);
-					av_opt_set(ctx->c->priv_data, "profile", "578", 0);
 					av_opt_set(ctx->c->priv_data, "tune", "zerolatency", 0);
 					//av_opt_set(ctx->c->priv_data, "prio_speed", "true", 0);
 					//av_opt_set(ctx->c->priv_data, "bit_rate_num", "40000", 0);
