@@ -697,15 +697,10 @@ void open_video(VideoContext* ctx, Error* err)
 				else
 				{
 					ctx->c->pix_fmt = AV_PIX_FMT_YUV420P;
-					//ctx->c->pix_fmt = AV_PIX_FMT_VIDEOTOOLBOX;
 					ctx->c->color_range = AVCOL_RANGE_MPEG;
-					//ctx->c->profile = AV_PROFILE_H264_CONSTRAINED_BASELINE;
-					//ctx->c->profile = AV_PROFILE_H264_BASELINE;
-					//ctx->c->level = 0;
 					av_opt_set(ctx->c->priv_data, "realtime", "true", 0);
 					av_opt_set(ctx->c->priv_data, "allow_sw", "true", 0);
-					//av_opt_set(ctx->c->priv_data, "profile", "AV_PROFILE_H264_CONSTRAINED_BASELINE", 0);
-					//av_opt_set(ctx->c->priv_data, "level", "0", 0);
+					av_opt_set(ctx->c->priv_data, "profile", "578", 0);
 					av_opt_set(ctx->c->priv_data, "tune", "zerolatency", 0);
 					//av_opt_set(ctx->c->priv_data, "prio_speed", "true", 0);
 					//av_opt_set(ctx->c->priv_data, "bit_rate_num", "40000", 0);
@@ -713,9 +708,10 @@ void open_video(VideoContext* ctx, Error* err)
 					//av_opt_set(ctx->c->priv_data, "max_ref_frames", "60", 0);
 					av_opt_set(ctx->c->priv_data, "preset", "ultrafast", 0);
 					av_opt_set(ctx->c->priv_data, "crf", "54", 0);
-					av_opt_set(ctx->c->priv_data, "hwaccel_device", "0", 0);
+					//av_opt_set(ctx->c->priv_data, "hwaccel_device", "0", 0);
 					//av_opt_set(ctx->c->priv_data, "hwaccel", "cuda", 0);
-					av_opt_set(ctx->c->priv_data, "hwaccel", "cuvid", 0);
+					//av_opt_set(ctx->c->priv_data, "hwaccel", "cuvid", 0);
+					av_opt_set(ctx->c->priv_data, "constant_bit_rate", "true", 0);
 					set_codec_params(ctx);
 					if (avcodec_open2(ctx->c, codec, NULL) == 0)
 						using_hw = 1;
